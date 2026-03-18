@@ -7,7 +7,7 @@ One-command SSH key setup for deploying with GitHub Actions.
 Run on your VPS with a single command:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/klovbin/gh-action-generator/main/setup-github-ssh.sh | bash
+curl -sSL https://raw.githubusercontent.com/klovbin/gh-action-generator/main/setup-github-ssh.sh -o /tmp/setup.sh && bash /tmp/setup.sh && rm -f /tmp/setup.sh
 ```
 
 ## What it does

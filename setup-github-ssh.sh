@@ -24,8 +24,8 @@ else
   echo ""
 fi
 
-# Get public IPv4 only
-IP=$(curl -4 -s ifconfig.me 2>/dev/null || curl -4 -s icanhazip.com 2>/dev/null || hostname -I | tr ' ' '\n' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+# Get public IPv4 only (ipv4.icanhazip.com has no AAAA, forces IPv4)
+IP=$(curl -s ipv4.icanhazip.com 2>/dev/null || curl -s 4.ident.me 2>/dev/null || curl -4 -s ifconfig.me 2>/dev/null || hostname -I 2>/dev/null | tr ' ' '\n' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
 USER=$(whoami)
 
 echo ""
@@ -44,3 +44,6 @@ echo "VPS_SSH_KEY (copy block below):"
 echo "+-----------------------------------------------------------------------+"
 cat $KEY_PATH
 echo "+-----------------------------------------------------------------------+"
+
+# Self-delete when run from file
+[[ -f "$0" ]] && rm -f "$0"
