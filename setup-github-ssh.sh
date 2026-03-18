@@ -7,7 +7,9 @@ KEY_PATH="$HOME/.ssh/github-actions"
 if [[ ! -f $KEY_PATH ]]; then
   echo "🚀 Generating SSH key..."
   mkdir -p $HOME/.ssh
-  ssh-keygen -t ed25519 -f $KEY_PATH -C "github-actions" -N "" >/dev/null
+  if ! ssh-keygen -t ed25519 -f $KEY_PATH -C "github-actions" -N "" </dev/null 2>/dev/null; then
+    ssh-keygen -t rsa -b 4096 -f $KEY_PATH -C "github-actions" -N "" </dev/null
+  fi
   echo "🔑 Adding public key to authorized_keys..."
   touch $HOME/.ssh/authorized_keys
   cat ${KEY_PATH}.pub >> $HOME/.ssh/authorized_keys
