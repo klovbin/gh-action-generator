@@ -4,29 +4,28 @@ set -e
 
 KEY_PATH="$HOME/.ssh/github-actions"
 
-echo "🚀 Generating SSH key..."
+if [[ ! -f $KEY_PATH ]]; then
+  echo "🚀 Generating SSH key..."
+  mkdir -p $HOME/.ssh
+  ssh-keygen -t ed25519 -f $KEY_PATH -C "github-actions" -N "" >/dev/null
+  echo "🔑 Adding public key to authorized_keys..."
+  touch $HOME/.ssh/authorized_keys
+  cat ${KEY_PATH}.pub >> $HOME/.ssh/authorized_keys
+  chmod 700 $HOME/.ssh
+  chmod 600 $HOME/.ssh/authorized_keys
+  echo ""
+  echo "=============================="
+  echo "✅ SETUP COMPLETE"
+  echo "=============================="
+else
+  echo "🔑 Using existing key..."
+  echo ""
+fi
 
-# Generate SSH key (no passphrase)
-ssh-keygen -t ed25519 -f $KEY_PATH -C "github-actions" -N "" >/dev/null
-
-echo "🔑 Adding public key to authorized_keys..."
-cat ${KEY_PATH}.pub >> $HOME/.ssh/authorized_keys
-
-# Fix permissions (important for SSH)
-chmod 700 $HOME/.ssh
-chmod 600 $HOME/.ssh/authorized_keys
-
-echo ""
-echo "=============================="
-echo "✅ SETUP COMPLETE"
-echo "=============================="
-
-# Get public IP
-IP=$(curl -s ifconfig.me || hostname -I | awk '{print $1}')
+# Get public IPv4 only
+IP=$(curl -4 -s ifconfig.me 2>/dev/null || curl -4 -s icanhazip.com 2>/dev/null || hostname -I | tr ' ' '\n' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
 USER=$(whoami)
 
-# Fixed-width table (колонки 14 + 2 + 45 = 61 символ)
-W="%-14s"
 echo ""
 echo "=============================="
 echo "  GitHub Secrets"
